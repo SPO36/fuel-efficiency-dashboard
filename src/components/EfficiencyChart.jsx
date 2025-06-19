@@ -15,7 +15,7 @@ const EfficiencyChart = ({ data, currentValue, trendStatus, isRealTime }) => {
     if (active && payload && payload.length) {
       return (
         <div
-          className="shadow-xl backdrop-blur-md p-3 rounded-lg"
+          className="backdrop-blur-md p-3 rounded-lg"
           style={{
             backgroundColor: "rgba(11, 23, 57, 0.8)",
             border: "0.5px solid rgba(152, 163, 199, 0.3)",
@@ -45,23 +45,27 @@ const EfficiencyChart = ({ data, currentValue, trendStatus, isRealTime }) => {
           stroke="none" // 흰색 테두리 제거
         />
         {/* 값 라벨 */}
-        <text
-          x={cx}
-          y={cy - 15}
-          textAnchor="middle"
-          fontSize="20"
-          fill="url(#textGradient)" // 그라데이션 적용
-          fontWeight="500"
-        >
-          {payload.efficiency}
-        </text>
+        {isRealTime ? (
+          ""
+        ) : (
+          <text
+            x={cx}
+            y={cy - 15}
+            textAnchor="middle"
+            fontSize="26"
+            fill="url(#textGradient)" // 그라데이션 적용
+            fontWeight="500"
+          >
+            {payload.efficiency}
+          </text>
+        )}
       </g>
     );
   };
 
   return (
     <div
-      className="shadow-2xl backdrop-blur-md card"
+      className="backdrop-blur-md px-4 card"
       style={{
         backgroundColor: "rgba(11, 23, 57, 0.4)",
         border: "0.5px solid rgba(152, 163, 199, 0.3)",
@@ -75,21 +79,33 @@ const EfficiencyChart = ({ data, currentValue, trendStatus, isRealTime }) => {
               {currentValue}
             </div>
             {isRealTime && (
-              <div className={`gap-1 badge ${trendStatus.color}`}>
+              <div
+                className="gap-1 rounded-full badge-xl"
+                style={{
+                  backgroundColor: trendStatus.color,
+                  color: trendStatus.textColor,
+                  border: `1px solid ${trendStatus.textColor}30`,
+                }}
+              >
                 <span>{trendStatus.icon}</span> {trendStatus.direction}
               </div>
             )}
           </div>
           <div className="flex items-center gap-2 mt-2 sm:mt-0">
             <div className="bg-primary rounded-full w-3 h-3"></div>
-            <span className="opacity-70 text-sm">Fuel Efficiency Score</span>
+            <span
+              style={{ color: "rgba(171, 185, 255, 1)" }}
+              className="opacity-70 text-2xl"
+            >
+              Fuel Efficiency Score
+            </span>
           </div>
         </div>
         <div className="h-80">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart
               data={data}
-              margin={{ top: 35, right: 30, left: 0, bottom: 20 }}
+              margin={{ top: 30, right: 40, left: 40, bottom: 40 }}
               animationDuration={800}
             >
               <defs>
@@ -126,19 +142,19 @@ const EfficiencyChart = ({ data, currentValue, trendStatus, isRealTime }) => {
               <XAxis
                 dataKey="time"
                 stroke="rgba(255,255,255,0.6)"
-                fontSize={14}
+                fontSize={20}
                 axisLine={false}
                 tickLine={false}
-                tick={{ dy: 10, fill: "#AEB9E180" }}
+                tick={{ dy: 20, fill: "#AEB9E180" }}
                 interval="preserveStartEnd"
               />
               <YAxis
                 domain={[0, 140]}
                 stroke="rgba(255,255,255,0.6)"
-                fontSize={14}
+                fontSize={20}
                 axisLine={false}
                 tickLine={false}
-                tick={{ fill: "#AEB9E180" }}
+                tick={{ dx: -20, fill: "#AEB9E180" }}
                 width={35}
               />
               <Tooltip content={<CustomTooltip />} />

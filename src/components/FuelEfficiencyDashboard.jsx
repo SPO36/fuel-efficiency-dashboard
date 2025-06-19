@@ -79,13 +79,29 @@ const FuelEfficiencyDashboard = () => {
   };
 
   // UP/DOWN 상태 계산
+  // getTrendStatus 함수를 다음과 같이 수정
   const getTrendStatus = () => {
     if (currentValue > previousValue) {
-      return { direction: "UP", color: "badge-success", icon: "▲" };
+      return {
+        direction: "UP",
+        color: "rgba(34, 197, 94, 0.2)",
+        textColor: "rgba(20, 202, 116, 1)",
+        icon: "▲",
+      };
     } else if (currentValue < previousValue) {
-      return { direction: "DOWN", color: "badge-error", icon: "▼" };
+      return {
+        direction: "DOWN",
+        color: "rgba(255, 90, 101, 0.2)",
+        textColor: "rgba(255, 90, 101, 1)",
+        icon: "▼",
+      };
     } else {
-      return { direction: "SAME", color: "badge-ghost", icon: "●" };
+      return {
+        direction: "SAME",
+        color: "rgba(156, 163, 175, 0.2)",
+        textColor: "rgb(156, 163, 175)",
+        icon: "●",
+      };
     }
   };
 
@@ -110,7 +126,7 @@ const FuelEfficiencyDashboard = () => {
       <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-slate-900/80 to-black/50"></div>
 
       <div className="z-10 relative px-4 py-8 w-full">
-        <div className="space-y-6 mx-auto max-w-7xl">
+        <div className="space-y-5 mx-auto p-20 max-w-full">
           {/* Header */}
           <div className="flex sm:flex-row flex-col justify-between items-start sm:items-center gap-4">
             <h1 className="font-light text-3xl">Fuel Efficiency Index</h1>
@@ -129,7 +145,7 @@ const FuelEfficiencyDashboard = () => {
           />
 
           {/* Status Grid */}
-          <div className="gap-6 grid grid-cols-1 lg:grid-cols-3">
+          <div className="gap-6 grid grid-cols-1 lg:grid-cols-3 pt-4">
             {statusSections.map((section, index) => (
               <StatusCard
                 key={index}

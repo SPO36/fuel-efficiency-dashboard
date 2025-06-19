@@ -11,7 +11,7 @@ export const StatusBadge = ({ status }) => {
 
   return (
     <div
-      className={`badge ${getStatusClass()} badge-lg rounded-full font-medium`}
+      className={`badge ${getStatusClass()} badge-xl rounded-full font-medium`}
     >
       {status}
     </div>
@@ -24,15 +24,15 @@ export const StatusItem = ({ icon, label, status, isUpdating = false }) => (
       isUpdating ? "animate-pulse" : ""
     }`}
   >
-    <div className="flex items-center gap-3">
-      <div className="w-10 h-10">
+    <div className="flex items-center gap-5">
+      <div className="w-14 h-14">
         <img
           src={`/images/${icon}.png`} // icons 폴더 제거
           alt={label}
           className="w-full h-full object-contain"
         />
       </div>
-      <span style={{ color: "#AEB9E1" }} className="text-xl">
+      <span style={{ color: "#AEB9E1" }} className="text-2xl">
         {label}
       </span>
     </div>
@@ -41,21 +41,23 @@ export const StatusItem = ({ icon, label, status, isUpdating = false }) => (
 );
 
 export const StatusCard = ({ title, items, isRealTime }) => (
-  <div
-    className="shadow-2xl backdrop-blur-md card"
-    style={{
-      backgroundColor: "rgba(11, 23, 57, 0.4)",
-      border: "0.5px solid rgba(152, 163, 199, 0.3)",
-    }}
-  >
-    <div className="card-body">
-      <h3 className="opacity-70 mb-4 text-xl">{title}</h3>
-      <div className="space-y-3">
-        {items.map((item, index) => {
-          // key를 별도로 분리하고 나머지 props만 전달
-          const { key, ...itemProps } = item;
-          return <StatusItem key={index} {...itemProps} isUpdating={false} />;
-        })}
+  <div>
+    <h3 className="mb-4 font-light text-3xl">{title}</h3>
+    <div
+      className="backdrop-blur-md card"
+      style={{
+        backgroundColor: "rgba(11, 23, 57, 0.4)",
+        border: "0.5px solid rgba(152, 163, 199, 0.3)",
+      }}
+    >
+      <div className="card-body">
+        <div className="space-y-3">
+          {items.map((item, index) => {
+            // key를 별도로 분리하고 나머지 props만 전달
+            const { key, ...itemProps } = item;
+            return <StatusItem key={index} {...itemProps} isUpdating={false} />;
+          })}
+        </div>
       </div>
     </div>
   </div>
@@ -68,11 +70,15 @@ export const TimeButtons = ({ selectedPeriod, onPeriodChange }) => {
         <button
           key={period.id}
           onClick={() => onPeriodChange(period.id)}
-          className={`btn btn-md transition-all duration-200 ${
+          className={`btn btn-xl transition-all duration-200 rounded-full ${
             selectedPeriod === period.id
-              ? "btn-primary rounded-full" // 선택된 버튼
-              : "btn-ghost rounded-full hover:btn-outline" // 선택되지 않은 버튼
+              ? "btn-primary"
+              : "btn-ghost hover:btn-outline"
           }`}
+          style={{
+            height: "44px",
+            padding: "0px 24px", // 상하 6px, 좌우 16px
+          }}
         >
           {period.icon && period.id === "realtime" && (
             <span className="bg-red-500 mr-2 rounded-full w-2 h-2 animate-pulse"></span>
