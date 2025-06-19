@@ -16,6 +16,23 @@ const FuelEfficiencyDashboard = () => {
   const [previousValue, setPreviousValue] = useState(92);
   const [vehicleStatus, setVehicleStatus] = useState({});
   const [selectedPeriod, setSelectedPeriod] = useState("realtime");
+  const [clickedDataIndex, setClickedDataIndex] = useState(null);
+
+  const handleChartClick = (index) => {
+    setClickedDataIndex(index);
+    if (!isRealTime) {
+      const targetData = getStaticData(selectedPeriod)[index];
+      if (targetData && targetData.fullStatus) {
+        setVehicleStatus(targetData.fullStatus);
+      }
+    }
+  };
+
+  const getAverageEfficiency = (data) => {
+    if (!data || data.length === 0) return 0;
+    const sum = data.reduce((acc, item) => acc + item.efficiency, 0);
+    return Math.round(sum / data.length);
+  };
 
   // 실시간 데이터 업데이트
   const updateData = useCallback(() => {
@@ -63,17 +80,32 @@ const FuelEfficiencyDashboard = () => {
     setVehicleStatus(VEHICLE_DATA[11] || VEHICLE_DATA[0]);
   }, []);
 
-  // 시간 기간 변경 핸들러 (수정됨)
+  // handlePeriodChange 함수를 다음과 같이 수정
   const handlePeriodChange = (period) => {
     setSelectedPeriod(period);
     setIsRealTime(period === "realtime");
 
-    if (period !== "realtime") {
+    if (period === "realtime") {
+      // Real-Time으로 돌아갈 때 모든 상태 초기화
+      setCurrentIndex(0);
+      setCurrentData([]);
+
+      // 첫 번째 데이터로 초기화
+      const firstData = VEHICLE_DATA[0];
+      if (firstData) {
+        setPreviousValue(currentValue); // 현재값을 이전값으로
+        setCurrentValue(firstData.efficiency);
+        setVehicleStatus(firstData);
+      }
+    } else {
+      // 다른 기간 선택 시 정적 데이터 로드
       const data = getStaticData(period);
       setCurrentData(data);
       if (data.length > 0) {
-        setPreviousValue(currentValue); // 이전 값 저장
-        setCurrentValue(data[data.length - 1].efficiency);
+        const avg = getAverageEfficiency(data);
+        setPreviousValue(currentValue);
+        setCurrentValue(avg);
+        setVehicleStatus(data[data.length - 1].fullStatus);
       }
     }
   };
@@ -142,6 +174,10 @@ const FuelEfficiencyDashboard = () => {
             currentValue={currentValue}
             trendStatus={trendStatus}
             isRealTime={isRealTime}
+            vehicleStatus={vehicleStatus}
+            onChartClick={handleChartClick}
+            clickedDataIndex={clickedDataIndex}
+            selectedPeriod={selectedPeriod}
           />
 
           {/* Status Grid */}

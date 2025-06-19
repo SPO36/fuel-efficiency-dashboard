@@ -8,8 +8,37 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { getCurrentSummary } from "../data/vehicleData"; // import 추가
 
-const EfficiencyChart = ({ data, currentValue, trendStatus, isRealTime }) => {
+const EfficiencyChart = ({
+  data,
+  currentValue,
+  trendStatus,
+  isRealTime,
+  vehicleStatus,
+  onChartClick,
+  clickedDataIndex,
+  selectedPeriod,
+}) => {
+  // 현재 상태 요약 생성
+  const currentSummary = getCurrentSummary(vehicleStatus || {});
+
+  // 차트 클릭 핸들러
+  const handleAreaClick = (event) => {
+    if (!isRealTime && onChartClick && event.activeTooltipIndex !== undefined) {
+      onChartClick(event.activeTooltipIndex);
+    }
+  };
+
+  const getValueLabel = () => {
+    if (isRealTime) return "Current Efficiency";
+    if (selectedPeriod === "today") return "Today’s Avg Efficiency";
+    if (selectedPeriod === "week") return "Weekly Avg Efficiency";
+    if (selectedPeriod === "month") return "Monthly Avg Efficiency";
+    if (selectedPeriod === "year") return "Yearly Avg Efficiency";
+    return "Efficiency";
+  };
+
   // 커스텀 툴팁
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
@@ -72,9 +101,9 @@ const EfficiencyChart = ({ data, currentValue, trendStatus, isRealTime }) => {
       }}
     >
       <div className="card-body">
-        <div className="flex sm:flex-row flex-col justify-between items-start sm:items-center mb-6">
+        <div className="flex sm:flex-row flex-col justify-between items-start sm:items-center mb-4">
           <div className="flex items-center gap-4">
-            <div className="opacity-70 text-2xl">Current Value</div>
+            <div className="opacity-70 text-2xl">{getValueLabel()}</div>
             <div className="font-bold text-primary text-5xl">
               {currentValue}
             </div>
@@ -101,12 +130,27 @@ const EfficiencyChart = ({ data, currentValue, trendStatus, isRealTime }) => {
             </span>
           </div>
         </div>
+
+        {/* 요약 메시지 - 항상 높이 유지하되 실시간 모드에서만 내용 표시 */}
+        <div className="flex justify-center items-center mb-6 h-7 text-center">
+          {isRealTime && (
+            <p
+              className={`text-2xl font-medium ${
+                currentSummary.color || "text-white"
+              }`}
+            >
+              {currentSummary.message || "현재 주행 상태를 분석 중입니다."}
+            </p>
+          )}
+        </div>
+
         <div className="h-80">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart
               data={data}
               margin={{ top: 30, right: 40, left: 40, bottom: 40 }}
               animationDuration={800}
+              onClick={handleAreaClick}
             >
               <defs>
                 <linearGradient
@@ -149,7 +193,7 @@ const EfficiencyChart = ({ data, currentValue, trendStatus, isRealTime }) => {
                 interval="preserveStartEnd"
               />
               <YAxis
-                domain={[0, 140]}
+                domain={[0, 100]}
                 stroke="rgba(255,255,255,0.6)"
                 fontSize={20}
                 axisLine={false}

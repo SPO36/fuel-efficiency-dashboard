@@ -77,7 +77,7 @@ export const TimeButtons = ({ selectedPeriod, onPeriodChange }) => {
           }`}
           style={{
             height: "44px",
-            padding: "0px 24px", // 상하 6px, 좌우 16px
+            padding: "0px 20px", // 상하 6px, 좌우 16px
           }}
         >
           {period.icon && period.id === "realtime" && (
